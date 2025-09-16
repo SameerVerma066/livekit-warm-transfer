@@ -1,17 +1,19 @@
-from livekit import AccessToken, RoomGrant
-from config.settings import settings
+from livekit import api
+from config.settings import settings  # Adjusted for your backend folder structure
 import time
 
 def generate_livekit_token(identity: str, room_name: str = None) -> str:
-    # Create a new access token using LiveKit API keys
-    token = AccessToken(settings.LIVEKIT_API_KEY, settings.LIVEKIT_API_SECRET, identity=identity)
+    token = api.AccessToken()
+    token.with_identity(identity)
+    token.with_name(identity)  # Optional: set a display name or use identity
 
-    # Add grants for room access if room_name is specified
+    # Add grants for room joining, and room if specified
     if room_name:
-        room_grant = RoomGrant(room=room_name)
-        token.add_grant(room_grant)
+        token.with_grants(api.VideoGrants(room_join=True, room=room_name))
+    else:
+        token.with_grants(api.VideoGrants(room_join=True))
 
-    # Set token expiry (default 1 hour)
+    # Set expiry TTL in seconds (default is 1 hour)
     token.ttl_seconds = 3600
 
     # Generate and return JWT token string

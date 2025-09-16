@@ -1,7 +1,5 @@
-# app/routes/livekit_routes.py
-
 from fastapi import APIRouter, Query, HTTPException
-from app.services.livekit_service import generate_livekit_token
+from services.livekit_service import generate_livekit_token
 
 router = APIRouter()
 
