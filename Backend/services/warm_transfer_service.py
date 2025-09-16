@@ -1,27 +1,31 @@
-from livekit import api
-from config.settings import settings
+from services.livekit_service import (
+    create_room,
+    invite_participant_to_room,
+    remove_participant_from_room,
+    send_message_to_room
+)
+from services.transcript_service import get_transcript
+from services.llm_service import generate_call_summary
 
-def create_room(room_name: str):
-    # Placeholder: LiveKit server API call to create a room if needed
-    # LiveKit rooms are created on demand usually, so may not need explicit call
-    return room_name
 
-def generate_livekit_token(identity: str, room_name: str = None) -> str:
-    token = api.AccessToken()
-    token.with_identity(identity)
-    if room_name:
-        token.with_grants(api.VideoGrants(room_join=True, room=room_name))
-    else:
-        token.with_grants(api.VideoGrants(room_join=True))
-    token.ttl_seconds = 3600
-    return token.to_jwt()
+async def initiate_warm_transfer(original_room_id: str, agent_a_id: str, agent_b_id: str, caller_id: str):
+    new_room_id = await create_room()  # Create new room for warm transfer
 
-def initiate_warm_transfer(caller_identity: str, agent_identity: str, room_name: str):
-    # Caller and agent both join the same room for warm transfer
-    caller_token = generate_livekit_token(caller_identity, room_name)
-    agent_token = generate_livekit_token(agent_identity, room_name)
+    agent_b_token = await invite_participant_to_room(new_room_id, agent_b_id)
+
+    transcript = get_transcript(original_room_id)
+
+    summary = await generate_call_summary(transcript)
+
+    await send_message_to_room(new_room_id, agent_b_id, summary)
+
+    await remove_participant_from_room(original_room_id, agent_a_id)
+
+    # Caller connection management to new room would go here
+
     return {
-        "room_name": room_name,
-        "caller_token": caller_token,
-        "agent_token": agent_token,
+        "new_room_id": new_room_id,
+        "agent_b_token": agent_b_token,
+        "summary": summary,
+        "status": "Warm transfer initiated successfully"
     }
