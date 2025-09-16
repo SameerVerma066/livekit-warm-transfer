@@ -1,5 +1,5 @@
 from livekit import AccessToken, RoomGrant
-from app.config.settings import settings
+from config.settings import settings
 import time
 
 def generate_livekit_token(identity: str, room_name: str = None) -> str:
