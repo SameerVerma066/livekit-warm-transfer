@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from services.transcript_service import save_transcript, get_transcript
+from services.llm_service import generate_call_summary
 
 router = APIRouter()
 
@@ -9,11 +10,20 @@ class TranscriptRequest(BaseModel):
     transcript: str
 
 @router.post("/save")
-def save_call_transcript(req: TranscriptRequest):
+async def save_call_transcript(req: TranscriptRequest):
     try:
+        print(f"Received transcript for call_id: {req.call_id}")
         save_transcript(req.call_id, req.transcript)
-        return {"message": "Transcript saved"}
+        print("Transcript saved successfully.")
+        
+        summary = await generate_call_summary(req.transcript)
+        
+        return {
+            "message": "Transcript saved",
+            "summary": summary
+        }
     except Exception as e:
+        print(f"Error in /transcript/save: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/get/{call_id}")
