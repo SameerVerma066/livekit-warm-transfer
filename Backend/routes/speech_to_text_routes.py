@@ -7,8 +7,8 @@ from services.llm_service import generate_call_summary
 router = APIRouter()
 
 SPEECH_TO_TEXT_API_KEY = settings.SPEECH_TO_TEXT_API_KEY
-SPEECH_TO_TEXT_API_URL = settings.SPEECH_TO_TEXT_API_URL  # https://api.assemblyai.com/v2/transcript
-ASSEMBLYAI_UPLOAD_URL = settings.ASSEMBLYAI_UPLOAD_URL  # https://api.assemblyai.com/v2/upload
+SPEECH_TO_TEXT_API_URL = settings.SPEECH_TO_TEXT_API_URL 
+ASSEMBLYAI_UPLOAD_URL = settings.ASSEMBLYAI_UPLOAD_URL  
 
 @router.post("/speech-to-summary")
 async def speech_to_summary(audio: UploadFile = File(...)):
