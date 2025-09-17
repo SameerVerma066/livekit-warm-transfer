@@ -9,7 +9,7 @@ This system enables:
 - Call transcript is captured and summarized via speech-to-text and LLM summarization.
 - Call summary and context are shared with Agent B before joining.
 - Agent A leaves the original room; Agent B and Caller continue the call in the new room.
-- Optional extension with Twilio to bridge calls to real phone/SIP devices.
+
 - Frontend UI in Next.js to operate the flow interactively.
 
 ---
@@ -82,12 +82,6 @@ This system enables:
 
 ---
 
-### Optional Extensions
-
-- **Twilio Integration to dial phone/SIP:**  
-  Bridge LiveKit audio with phone calls.  
-  Agent A speaks call summary live.  
-  Requires Twilio API backend and frontend UI.
 
 - **State synchronization / signaling for multi-agent coordination.**
 
@@ -131,7 +125,6 @@ This system enables:
 - AssemblyAI for speech-to-text transcription.  
 - OpenAI or custom LLM for text summarization.  
 - Env variable management for API keys and URLs.  
-- Docker (optional) for containerized deployment.
 
 ---
 
